@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPNVPN FREE</title>
+    <style>
+        body {
+            background-color: #1c1c1c;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        h1 {
+            color: #ff0062;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            animation: slideDown 1s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .info-box {
+            background-color: #2a2a2a;
+            border: 2px solid #ff0062;
+            border-radius: 100px;
+            padding: 39px; /* کاهش اندازه padding */
+            text-align: center;
+            margin: 20px auto; /* کاهش حاشیه */
+            max-width: 87%; /* تنظیم حداکثر عرض باکس */
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .info-box p {
+            font-size: 34px; /* اندازه بزرگتر برای متن */
+            font-weight: bold; /* فونت ضخیم */
+            color: white; /* تغییر رنگ به سفید */
+            margin: 0; /* حذف حاشیه */
+        }
+        @media (max-width: 768px) {
+            .info-box {
+                padding: 15px; /* کاهش اندازه padding در گوشی */
+            }
+            .info-box p {
+                font-size: 18px; /* کاهش اندازه فونت در گوشی */
+            }
+        }
+        .link-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .link-item {
+            background-color: #2a2a2a;
+            border: 1px solid #ff0062;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            max-width: 45%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        .link-item:hover {
+            background-color: #333;
+            transform: scale(1.03);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        @media (max-width: 768px) {
+            .link-item {
+                max-width: 100%;
+            }
+        }
+        .link-item span {
+            color: #ff0062;
+            font-size: 18px;
+        }
+        .link-item button {
+            background-color: #ff0062;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s ease;
+        }
+        .link-item button:hover {
+            background-color: #e60055;
+            transform: scale(1.05);
+        }
+        .link-item img {
+            width: 30px;
+            height: 30px;
+            filter: brightness(0) invert(1);
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+        .link-item-number {
+            color: #ff0062;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        .link-item-number:hover img {
+            transform: rotate(360deg);
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid #ff0062;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        footer span {
+            color: white;
+        }
+        footer a {
+            color: #ff0062;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            text-decoration: underline;
+            color: #ff1a75;
+        }
+    </style>
+</head>
+<body>
+    <h1>OPNVPN FREE</h1>
+    
+    <div class="info-box">
+        <p>یوزر پسورد ندارد و نیاز نیست! راحت استفاده کنید</p>
+    </div>
+
+    <div class="link-container" id="link-container">
+        <!-- لینک‌ها به صورت داینامیک اضافه می‌شوند -->
+    </div>
+
+    <footer>
+        <span>طراحی شده توسط </span>
+        <a href="https://t.me/mehdisedighinasab" target="_blank">مهدی صدیقی نسب</a>
+    </footer>
+
+    <script>
+        // تابع برای تشخیص پروتکل از نام فایل
+        function getProtocol(link) {
+            if (link.includes("tcp")) {
+                return "TCP";
+            } else if (link.includes("udp")) {
+                return "UDP";
+            }
+            return "Unknown";
+        }
+
+        // فراخوانی و نمایش لینک‌ها از ipspeed.info/ovpn
+        fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://ipspeed.info/ovpn/'))
+        .then(response => response.json())
+        .then(data => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data.contents, 'text/html');
+            const links = doc.querySelectorAll('a');
+            const linkContainer = document.getElementById('link-container');
+            let linkIndex = 1;
+
+            links.forEach(link => {
+                const linkText = link.textContent.trim();
+
+                // حذف لینک‌های غیرضروری
+                if (["Name", "Last Modified", "Size", "Parent Directory"].includes(linkText)) {
+                    return;
+                }
+
+                const protocol = getProtocol(linkText);
+
+                // ایجاد آیتم برای هر لینک
+                const linkItem = document.createElement('div');
+                linkItem.classList.add('link-item');
+
+                // اضافه کردن شماره، آیکون و دکمه دانلود
+                linkItem.innerHTML = `
+                    <span class="link-item-number">${linkIndex} <img src="./OpenVPN icon.svg" alt="OpenVPN"></span>
+                    <span>پروتکل: ${protocol}</span>
+                    <button onclick="window.location.href='https://ipspeed.info/ovpn/${linkText}'">دانلود</button>
+                `;
+                
+                linkContainer.appendChild(linkItem);
+                linkIndex++;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching links:', error);
+        });
+    </script>
+</body>
+</html>
