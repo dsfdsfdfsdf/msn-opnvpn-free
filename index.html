@@ -34,10 +34,10 @@
             background-color: #2a2a2a;
             border: 2px solid #ff0062;
             border-radius: 100px;
-            padding: 39px; /* کاهش اندازه padding */
+            padding: 39px;
             text-align: center;
-            margin: 20px auto; /* کاهش حاشیه */
-            max-width: 87%; /* تنظیم حداکثر عرض باکس */
+            margin: 20px auto;
+            max-width: 87%;
             animation: fadeInUp 0.6s ease forwards;
             opacity: 0;
         }
@@ -52,17 +52,17 @@
             }
         }
         .info-box p {
-            font-size: 34px; /* اندازه بزرگتر برای متن */
-            font-weight: bold; /* فونت ضخیم */
-            color: white; /* تغییر رنگ به سفید */
-            margin: 0; /* حذف حاشیه */
+            font-size: 34px;
+            font-weight: bold;
+            color: white;
+            margin: 0;
         }
         @media (max-width: 768px) {
             .info-box {
-                padding: 15px; /* کاهش اندازه padding در گوشی */
+                padding: 15px;
             }
             .info-box p {
-                font-size: 18px; /* کاهش اندازه فونت در گوشی */
+                font-size: 18px;
             }
         }
         .link-container {
@@ -181,44 +181,55 @@
             return "Unknown";
         }
 
-        // فراخوانی و نمایش لینک‌ها از ipspeed.info/ovpn
-        fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://ipspeed.info/ovpn/'))
-        .then(response => response.json())
-        .then(data => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(data.contents, 'text/html');
-            const links = doc.querySelectorAll('a');
-            const linkContainer = document.getElementById('link-container');
-            let linkIndex = 1;
+        // تابع برای دریافت و به‌روزرسانی لینک‌ها
+        function fetchLinks() {
+            fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://ipspeed.info/ovpn/'))
+            .then(response => response.json())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, 'text/html');
+                const links = doc.querySelectorAll('a');
+                const linkContainer = document.getElementById('link-container');
 
-            links.forEach(link => {
-                const linkText = link.textContent.trim();
+                // پاک کردن لیست قبلی
+                linkContainer.innerHTML = '';
+                let linkIndex = 1;
 
-                // حذف لینک‌های غیرضروری
-                if (["Name", "Last Modified", "Size", "Parent Directory"].includes(linkText)) {
-                    return;
-                }
+                links.forEach(link => {
+                    const linkText = link.textContent.trim();
 
-                const protocol = getProtocol(linkText);
+                    // حذف لینک‌های غیرضروری
+                    if (["Name", "Last Modified", "Size", "Parent Directory"].includes(linkText)) {
+                        return;
+                    }
 
-                // ایجاد آیتم برای هر لینک
-                const linkItem = document.createElement('div');
-                linkItem.classList.add('link-item');
+                    const protocol = getProtocol(linkText);
 
-                // اضافه کردن شماره، آیکون و دکمه دانلود
-                linkItem.innerHTML = `
-                    <span class="link-item-number">${linkIndex} <img src="./OpenVPN icon.svg" alt="OpenVPN"></span>
-                    <span>پروتکل: ${protocol}</span>
-                    <button onclick="window.location.href='https://ipspeed.info/ovpn/${linkText}'">دانلود</button>
-                `;
-                
-                linkContainer.appendChild(linkItem);
-                linkIndex++;
+                    // ایجاد آیتم برای هر لینک
+                    const linkItem = document.createElement('div');
+                    linkItem.classList.add('link-item');
+
+                    // اضافه کردن شماره، آیکون و دکمه دانلود
+                    linkItem.innerHTML = `
+                        <span class="link-item-number">${linkIndex} <img src="./OpenVPN icon.svg" alt="OpenVPN"></span>
+                        <span>پروتکل: ${protocol}</span>
+                        <button onclick="window.location.href='https://ipspeed.info/ovpn/${linkText}'">دانلود</button>
+                    `;
+
+                    linkContainer.appendChild(linkItem);
+                    linkIndex++;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching links:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error fetching links:', error);
-        });
+        }
+
+        // اجرای اولیه تابع برای دریافت لینک‌ها
+        fetchLinks();
+
+        // تنظیم به‌روزرسانی خودکار هر 10 دقیقه (600000 میلی‌ثانیه)
+        setInterval(fetchLinks, 600000);
     </script>
 </body>
 </html>
